@@ -1,21 +1,14 @@
 package com.destroytoday.window
 {
-	import flash.desktop.NativeApplication;
 	import flash.display.NativeWindow;
 	import flash.display.Screen;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
-	import flash.events.Event;
-	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import mockolate.mock;
-	import mockolate.nice;
-	import mockolate.prepare;
-	
-	import org.flexunit.async.Async;
 	import org.hamcrest.assertThat;
 	import org.hamcrest.core.isA;
+	import org.hamcrest.core.not;
 	import org.hamcrest.object.equalTo;
 
 	public class WindowTest
@@ -123,6 +116,17 @@ package com.destroytoday.window
 			
 			assertThat(window.x, equalTo(-1608.0));
 			assertThat(window.y, equalTo(-807.0));
+		}
+		
+		[Test]
+		public function window_can_deactivate():void
+		{
+			window = new Window();
+			
+			window.activate();
+			window.deactivate();
+			
+			assertThat(window.active, not(true));
 		}
 	}
 }

@@ -43,6 +43,15 @@ package com.destroytoday.window
 		//
 		//--------------------------------------------------------------------------
 		
+		public function deactivate():void
+		{
+			if (active)
+			{
+				visible = false;
+				visible = true;
+			}
+		}
+		
 		public function center(screenRect:Rectangle = null):void
 		{
 			if (!screenRect)
