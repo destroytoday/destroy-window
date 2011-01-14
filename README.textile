@@ -1,0 +1,65 @@
+h1. Window
+
+h2. Overview
+
+This library provides your AIR app with the window API that should have been.
+
+h2. Features
+
+* single-line window instantiation without the need of NativeWindowInitOptions
+* stage is no-scale and top-left align by default
+* window manager for batch operations, like closing all windows
+
+h2. Usage
+
+h3. Window
+
+Instantiating a window. Unless specified, it uses the default NativeWindowInitOptions settings. It is also visible by default.
+
+<pre>
+new Window();
+</pre>
+
+Centering a window on the main screen.
+
+<pre>
+window.center();
+</pre>
+
+Centering a window on a specific rectangle.
+
+<pre>
+window.center(new Rectangle(100.0, 200.0, 800.0, 600.0));
+</pre>
+
+Centering a window on a second screen.
+
+<pre>
+var secondScreen:Screen = Screen.screens[1];
+
+window.center(secondScreen.visibleBounds);
+</pre>
+
+h3. WindowManager
+
+Managing windows.
+
+<pre>
+windowManager.addWindow(new Window());
+
+windowManager.removeWindow(window);
+
+windowManager.removeAllWindows();
+</pre>
+
+Closing all (commonly used when quitting the application to ensure process closes)
+
+<pre>
+windowManager.closeAllWindows()
+</pre>
+
+Bring all windows to front.
+
+<pre>
+windowManager.bringAllWindowsToFront();
+</pre>
