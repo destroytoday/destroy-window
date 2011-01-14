@@ -303,5 +303,19 @@ package com.destroytoday.window
 			
 			assertThat(window.numListeners, equalTo(0));
 		}
+		
+		[Test]
+		public function bringing_all_windows_to_front_orders_each_window_to_front():void
+		{
+			var window0:NativeWindow = manager.addWindow(nice(NativeWindow, null, [new NativeWindowInitOptions()]));
+			var window1:NativeWindow = manager.addWindow(nice(NativeWindow, null, [new NativeWindowInitOptions()]));
+			var window2:NativeWindow = manager.addWindow(nice(NativeWindow, null, [new NativeWindowInitOptions()]));
+
+			manager.bringAllWindowsToFront();
+			
+			assertThat(window0, received().method('orderToFront').once())
+			assertThat(window1, received().method('orderToFront').once())
+			assertThat(window2, received().method('orderToFront').once())
+		}
 	}
 }

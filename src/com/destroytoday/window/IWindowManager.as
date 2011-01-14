@@ -15,6 +15,7 @@ package com.destroytoday.window
 		function getWindowIndex(window:NativeWindow):int;
 		function getWindowAtIndex(index:int):NativeWindow;
 		
+		function bringAllWindowsToFront():void;
 		function closeAllWindows():void;
 	}
 }

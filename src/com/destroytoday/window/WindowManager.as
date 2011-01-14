@@ -122,6 +122,12 @@ package com.destroytoday.window
 			_windowList.length = 0;
 		}
 		
+		public function bringAllWindowsToFront():void
+		{
+			for each (var window:NativeWindow in _windowList)
+				window.orderToFront();
+		}
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Handlers
