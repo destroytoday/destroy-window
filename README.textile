@@ -52,7 +52,7 @@ windowManager.removeWindow(window);
 windowManager.removeAllWindows();
 </pre>
 
-Closing all (commonly used when quitting the application to ensure process closes)
+Closing all windows (commonly used when quitting the application to ensure process closes)
 
 <pre>
 windowManager.closeAllWindows()
