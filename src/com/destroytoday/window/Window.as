@@ -51,7 +51,7 @@ package com.destroytoday.window
 				visible = true;
 			}
 		}
-		
+
 		public function center(screenRect:Rectangle = null):void
 		{
 			if (!screenRect)

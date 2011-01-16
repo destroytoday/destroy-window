@@ -1,15 +1,53 @@
 package com.destroytoday.window
 {
+	import com.destroytoday.invalidation.IInvalidatable;
+	import com.destroytoday.invalidation.IInvalidationManager;
+	
+	import flash.desktop.NativeApplication;
 	import flash.display.NativeWindow;
 	import flash.events.Event;
 	
-	public class WindowManager implements IWindowManager
+	import org.osflash.signals.Signal;
+	
+	public class WindowManager implements IWindowManager, IInvalidatable
 	{
+		//--------------------------------------------------------------------------
+		//
+		//  Signals
+		//
+		//--------------------------------------------------------------------------
+		
+		protected var _windowListChanged:Signal;
+		
+		public function get windowListChanged():Signal
+		{
+			return _windowListChanged ||= new Signal(Vector.<NativeWindow>);
+		}
+		
+		public function set windowListChanged(value:Signal):void
+		{
+			_windowListChanged = value;
+		}
+		
+		protected var _activeWindowChanged:Signal;
+		
+		public function get activeWindowChanged():Signal
+		{
+			return _activeWindowChanged ||= new Signal(NativeWindow);
+		}
+		
+		public function set activeWindowChanged(value:Signal):void
+		{
+			_activeWindowChanged = value;
+		}
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Properties
 		//
 		//--------------------------------------------------------------------------
+		
+		protected var _invalidationManager:IInvalidationManager;
 		
 		protected var _windowList:Vector.<NativeWindow> = new Vector.<NativeWindow>();
 		
@@ -17,12 +55,23 @@ package com.destroytoday.window
 		
 		//--------------------------------------------------------------------------
 		//
+		//  Flags
+		//
+		//--------------------------------------------------------------------------
+		
+		protected var dirtyWindowListFlag:Boolean;
+		
+		protected var dirtyActiveWindowFlag:Boolean;
+		
+		//--------------------------------------------------------------------------
+		//
 		//  Constructor
 		//
 		//--------------------------------------------------------------------------
 		
-		public function WindowManager()
+		public function WindowManager(invalidationManager:IInvalidationManager = null)
 		{
+			this.invalidationManager = invalidationManager;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -30,6 +79,16 @@ package com.destroytoday.window
 		//  Getters / Setters
 		//
 		//--------------------------------------------------------------------------
+		
+		public function get invalidationManager():IInvalidationManager
+		{
+			return _invalidationManager;
+		}
+		
+		public function set invalidationManager(value:IInvalidationManager):void
+		{
+			_invalidationManager = value;
+		}
 		
 		public function get numWindows():int
 		{
@@ -39,6 +98,16 @@ package com.destroytoday.window
 		public function get activeWindow():NativeWindow
 		{
 			return _activeWindow;
+		}
+		
+		protected function setActiveWindow(value:NativeWindow):void
+		{
+			if (value == _activeWindow) return;
+			
+			_activeWindow = value;
+			
+			dirtyActiveWindowFlag = true;
+			invalidate();
 		}
 		
 		//--------------------------------------------------------------------------
@@ -73,7 +142,11 @@ package com.destroytoday.window
 			{
 				_windowList[_windowList.length] = window;
 				
+				if (window.active)
+					setActiveWindow(window);
+				
 				addWindowListeners(window);
+				dirtyWindowList();
 			}
 			
 			return window;
@@ -83,9 +156,13 @@ package com.destroytoday.window
 		{
 			if (hasWindow(window))
 			{
+				if (window == activeWindow)
+					setActiveWindow(null);
+				
 				_windowList.splice(_windowList.indexOf(window), 1);
 				
 				removeWindowListeners(window);
+				dirtyWindowList();
 			}
 			
 			return window;
@@ -93,10 +170,16 @@ package com.destroytoday.window
 		
 		public function removeAllWindows():void
 		{
+			if (_windowList.length == 0)
+				return;
+			
+			setActiveWindow(null);
+			
 			for each (var window:NativeWindow in _windowList)
 				removeWindowListeners(window);
-				
+			
 			_windowList.length = 0;
+			dirtyWindowList();
 		}
 		
 		public function hasWindow(window:NativeWindow):Boolean
@@ -116,10 +199,14 @@ package com.destroytoday.window
 		
 		public function closeAllWindows():void
 		{
+			if (_windowList.length == 0)
+				return;
+			
 			for each (var window:NativeWindow in _windowList)
 				window.close();
 				
 			_windowList.length = 0;
+			dirtyWindowList();
 		}
 		
 		public function bringAllWindowsToFront():void
@@ -130,21 +217,66 @@ package com.destroytoday.window
 		
 		//--------------------------------------------------------------------------
 		//
+		//  Invalidation
+		//
+		//--------------------------------------------------------------------------
+		
+		protected function dirtyWindowList():void
+		{
+			dirtyWindowListFlag = true;
+			
+			invalidate();
+		}
+		
+		public function invalidate():void
+		{
+			if (invalidationManager)
+			{
+				invalidationManager.invalidateObject(this);
+			}
+			else
+			{
+				validate();
+			}
+		}
+		
+		public function validate():void
+		{
+			if (dirtyWindowListFlag)
+			{
+				dirtyWindowListFlag = false;
+				
+				windowListChanged.dispatch(_windowList);
+			}
+			
+			if (dirtyActiveWindowFlag)
+			{
+				dirtyActiveWindowFlag = false;
+				
+				if (_activeWindow && !_activeWindow.active)
+					_activeWindow.activate();
+				
+				activeWindowChanged.dispatch(_activeWindow);
+			}
+		}
+		
+		//--------------------------------------------------------------------------
+		//
 		//  Handlers
 		//
 		//--------------------------------------------------------------------------
 		
 		protected function windowActivateHandler(event:Event):void
 		{
-			_activeWindow = event.currentTarget as NativeWindow;
+			setActiveWindow(event.currentTarget as NativeWindow);
 		}
 		
 		protected function windowDeactivateHandler(event:Event):void
 		{
 			var window:NativeWindow = event.currentTarget as NativeWindow;
 			
-			if (window == _activeWindow)
-				_activeWindow = null;
+			if (window == activeWindow)
+				setActiveWindow(null);
 		}
 		
 		protected function windowCloseHandler(event:Event):void
