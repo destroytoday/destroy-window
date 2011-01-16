@@ -1,9 +1,14 @@
 package com.destroytoday.window
 {
 	import flash.display.NativeWindow;
+	
+	import org.osflash.signals.Signal;
 
 	public interface IWindowManager
 	{
+		function get windowListChanged():Signal;
+		function get activeWindowChanged():Signal;
+		
 		function get numWindows():int;
 		function get activeWindow():NativeWindow;
 		

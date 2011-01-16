@@ -3,7 +3,6 @@ package com.destroytoday.window
 	import com.destroytoday.invalidation.IInvalidatable;
 	import com.destroytoday.invalidation.IInvalidationManager;
 	
-	import flash.desktop.NativeApplication;
 	import flash.display.NativeWindow;
 	import flash.events.Event;
 	
