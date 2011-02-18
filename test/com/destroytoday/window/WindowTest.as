@@ -7,7 +7,6 @@ package com.destroytoday.window
 	import flash.geom.Rectangle;
 	
 	import org.hamcrest.assertThat;
-	import org.hamcrest.core.isA;
 	import org.hamcrest.core.not;
 	import org.hamcrest.object.equalTo;
 
@@ -51,7 +50,7 @@ package com.destroytoday.window
 		{
 			window = new Window();
 			
-			assertThat(window, isA(NativeWindow));
+			assertThat(window is NativeWindow);
 		}
 		
 		[Test]

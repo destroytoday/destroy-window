@@ -58,9 +58,9 @@ package com.destroytoday.window
 		//
 		//--------------------------------------------------------------------------
 		
-		protected var dirtyWindowListFlag:Boolean;
+		protected var isWindowListDirty:Boolean;
 		
-		protected var dirtyActiveWindowFlag:Boolean;
+		protected var isActiveWindowDirty:Boolean;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -105,7 +105,7 @@ package com.destroytoday.window
 			
 			_activeWindow = value;
 			
-			dirtyActiveWindowFlag = true;
+			isActiveWindowDirty = true;
 			invalidate();
 		}
 		
@@ -222,7 +222,7 @@ package com.destroytoday.window
 		
 		protected function dirtyWindowList():void
 		{
-			dirtyWindowListFlag = true;
+			isWindowListDirty = true;
 			
 			invalidate();
 		}
@@ -241,16 +241,16 @@ package com.destroytoday.window
 		
 		public function validate():void
 		{
-			if (dirtyWindowListFlag)
+			if (isWindowListDirty)
 			{
-				dirtyWindowListFlag = false;
+				isWindowListDirty = false;
 				
 				windowListChanged.dispatch(_windowList);
 			}
 			
-			if (dirtyActiveWindowFlag)
+			if (isActiveWindowDirty)
 			{
-				dirtyActiveWindowFlag = false;
+				isActiveWindowDirty = false;
 				
 				if (_activeWindow && !_activeWindow.active)
 					_activeWindow.activate();

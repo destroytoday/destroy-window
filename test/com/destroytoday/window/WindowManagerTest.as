@@ -14,7 +14,6 @@ package com.destroytoday.window
 	
 	import org.flexunit.async.Async;
 	import org.hamcrest.assertThat;
-	import org.hamcrest.core.isA;
 	import org.hamcrest.core.not;
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.nullValue;
@@ -88,7 +87,7 @@ package com.destroytoday.window
 		{
 			manager = new WindowManager();
 			
-			assertThat(manager, isA(IWindowManager));
+			assertThat(manager is IWindowManager);
 		}
 		
 		[Test]
