@@ -145,7 +145,7 @@ package com.destroytoday.window
 					setActiveWindow(window);
 				
 				addWindowListeners(window);
-				dirtyWindowList();
+				invalidateWindowList();
 			}
 			
 			return window;
@@ -161,7 +161,7 @@ package com.destroytoday.window
 				_windowList.splice(_windowList.indexOf(window), 1);
 				
 				removeWindowListeners(window);
-				dirtyWindowList();
+				invalidateWindowList();
 			}
 			
 			return window;
@@ -178,7 +178,7 @@ package com.destroytoday.window
 				removeWindowListeners(window);
 			
 			_windowList.length = 0;
-			dirtyWindowList();
+			invalidateWindowList();
 		}
 		
 		public function hasWindow(window:NativeWindow):Boolean
@@ -205,7 +205,7 @@ package com.destroytoday.window
 				window.close();
 				
 			_windowList.length = 0;
-			dirtyWindowList();
+			invalidateWindowList();
 		}
 		
 		public function bringAllWindowsToFront():void
@@ -220,7 +220,7 @@ package com.destroytoday.window
 		//
 		//--------------------------------------------------------------------------
 		
-		protected function dirtyWindowList():void
+		protected function invalidateWindowList():void
 		{
 			isWindowListDirty = true;
 			
